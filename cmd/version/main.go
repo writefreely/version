@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"runtime/debug"
+	"strings"
 	"time"
 )
 
@@ -91,6 +92,21 @@ func handleGetCurrentVer(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	testVer := r.FormValue("v")
+	if testVer != "" {
+		testVer = strings.Split(testVer, "-")[0]
+		if !strings.HasPrefix(testVer, "v") {
+			testVer = "v" + testVer
+		}
+		if testVer == app.Latest {
+			fmt.Fprintf(w, "Current version")
+			return
+		}
+		fmt.Fprintf(w, "Older version")
+		return
+	}
+
+	// Default answer is the current version number
 	fmt.Fprintf(w, app.Latest)
 }
 
